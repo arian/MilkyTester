@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Complex Spec Runner</title>
+
+	<link rel="stylesheet" type="text/css" href="/jasmine/jasmine.css">
+	<script src="/jasmine/jasmine.js"></script>
+	<script src="/jasmine/jasmine-html.js"></script>
+	<script src="/jasmine/socket-reporter.js"></script>
+
+	<script src="/require.js"></script>
+
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script type="text/javascript">
+
+	var socket = io.connect();
+	socket.on('reload', function(data){
+		if (data == 'now') history.go(0);
+		else setTimeout(function(){
+			history.go(0);
+		}, data * 1e3);
+	});
+
+	require({
+		paths: {
+			'Test': 'spec'
+		},
+		ready: function(){
+			require([
+				'Test/Sample'
+			], function(){
+				jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+				jasmine.getEnv().addReporter(new jasmine.SocketReporter(socket));
+				jasmine.getEnv().execute();
+			});
+		}
+	});
+	</script>
+
+</head>
+
+<body>
+</body>
+</html>
